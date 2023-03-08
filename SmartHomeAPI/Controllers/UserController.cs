@@ -18,26 +18,48 @@ namespace SmartHomeAPI.Controllers
         }
 
         [HttpPost]
-        public bool RegisterUser([FromHeader]string Name, [FromHeader]string Login, [FromHeader] string Password)
+        public int? RegisterUser([FromHeader]string Name, [FromHeader]string Login, [FromHeader] string Password)
         {
             //if Login already taken
             var searchedUser = (from p in db.Users where p.Login == Login select p).FirstOrDefault();
-            if (searchedUser == null)
+            if (searchedUser != null)
             {
-                //Response.StatusCode = 208;
+                Response.StatusCode = 404;
                 byte[] data = Encoding.UTF8.GetBytes("Login taken");
-                Response.Body.Write(data);
-                return false;
-
+                Response.Body.WriteAsync(data);
+                
+                return null;
             }
-            
+            Setting setting= new Setting();
+            db.Settings.Add(setting);
             User user = new User()
             {
                 Name = Name,
                 Password = Password,
-                Login = Login
+                Login = Login,
+                Setting= setting
             };
-            return true;
+            db.Users.Add(user);
+            db.SaveChanges();
+            return user.Id;
         }
+        [HttpGet("{Id}")]
+        public User GetUser([FromRoute] int Id)
+        {
+            return (from p in db.Users where p.Id== Id select p).FirstOrDefault();
+        }
+        [HttpPost]
+        public int? AuthorizeUser([FromHeader] string Login, [FromHeader]string Password)
+        {
+            var searched = (from p in db.Users where (p.Login==Login && p.Password==Password) select p).FirstOrDefault();
+            if (searched == null)
+            {
+                Response.StatusCode = 500;
+                return null;
+            }
+            return searched.Id;
+        }
+        
+
     }
 }

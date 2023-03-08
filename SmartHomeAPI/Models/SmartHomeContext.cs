@@ -18,23 +18,23 @@ namespace SmartHomeAPI.Models
         {
         }
 
-        public virtual DbSet<LightDevice> LightDevices { get; set; }
+        public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<Mobile> Mobiles { get; set; }
         public virtual DbSet<Room> Rooms { get; set; }
         public virtual DbSet<RoomType> RoomTypes { get; set; }
         public virtual DbSet<Setting> Settings { get; set; }
-        public virtual DbSet<ThermostatDevice> ThermostatDevices { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<LightDevice>(entity =>
+            modelBuilder.Entity<Device>(entity =>
             {
+                entity.Property(e => e.Type).HasMaxLength(50);
+
                 entity.HasOne(d => d.Room)
-                    .WithMany(p => p.LightDevices)
+                    .WithMany(p => p.Devices)
                     .HasForeignKey(d => d.RoomId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_LightDevices_Rooms");
+                    .HasConstraintName("FK_Devices_Rooms");
             });
 
             modelBuilder.Entity<Mobile>(entity =>
@@ -81,15 +81,6 @@ namespace SmartHomeAPI.Models
                 entity.Property(e => e.PhoneNumber).HasMaxLength(50);
 
                 entity.Property(e => e.Username).HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<ThermostatDevice>(entity =>
-            {
-                entity.HasOne(d => d.Room)
-                    .WithMany(p => p.ThermostatDevices)
-                    .HasForeignKey(d => d.RoomId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ThermostatDevices_Rooms");
             });
 
             modelBuilder.Entity<User>(entity =>

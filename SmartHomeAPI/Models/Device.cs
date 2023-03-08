@@ -5,12 +5,15 @@ using System.Collections.Generic;
 
 namespace SmartHomeAPI.Models
 {
-    public partial class ThermostatDevice
+    public partial class Device
     {
         public int Id { get; set; }
-        public int RoomId { get; set; }
-        public double? Temperature { get; set; }
+        public string Type { get; set; }
         public double? FanSpeed { get; set; }
+        public double? Temperature { get; set; }
+        public double? LightBrightness { get; set; }
+        public bool? IsActive { get; set; }
+        public int? RoomId { get; set; }
 
         public virtual Room Room { get; set; }
     }

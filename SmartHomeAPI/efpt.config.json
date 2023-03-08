@@ -15,7 +15,7 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[LightDevices]",
+         "Name": "[dbo].[Devices]",
          "ObjectType": 0
       },
       {
@@ -32,10 +32,6 @@
       },
       {
          "Name": "[dbo].[Settings]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[ThermostatDevices]",
          "ObjectType": 0
       },
       {

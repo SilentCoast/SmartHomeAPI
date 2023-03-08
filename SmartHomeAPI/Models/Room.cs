@@ -9,8 +9,7 @@ namespace SmartHomeAPI.Models
     {
         public Room()
         {
-            LightDevices = new HashSet<LightDevice>();
-            ThermostatDevices = new HashSet<ThermostatDevice>();
+            Devices = new HashSet<Device>();
         }
 
         public int Id { get; set; }
@@ -20,7 +19,6 @@ namespace SmartHomeAPI.Models
 
         public virtual RoomType Type { get; set; }
         public virtual User User { get; set; }
-        public virtual ICollection<LightDevice> LightDevices { get; set; }
-        public virtual ICollection<ThermostatDevice> ThermostatDevices { get; set; }
+        public virtual ICollection<Device> Devices { get; set; }
     }
 }
