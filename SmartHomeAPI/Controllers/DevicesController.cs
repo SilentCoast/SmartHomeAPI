@@ -15,9 +15,41 @@ namespace SmartHomeAPI.Controllers
             this.db = db;
         }
         [HttpGet("{roomId}")]
-        public List<Device> GetDevices([FromRoute] int roomId)
+        public List<DeviceDTO> GetDevices([FromRoute] int roomId)
         {
-            return (from p in db.Devices where p.RoomId==roomId select p).ToList();
+            List<DeviceDTO> devices= new List<DeviceDTO>();
+            var g = (from p in db.Devices where p.RoomId==roomId select p).ToList();
+            foreach (var device in g)
+            {
+                DeviceDTO deviceDTO = new DeviceDTO()
+                {
+                    Id = device.Id,
+                    Type = device.Type,
+                    
+                    FanSpeed = 0,
+                    Temperature = 0,
+                    LightBrightness = 0,
+                    IsActive = false
+                };
+                if (device.FanSpeed.HasValue)
+                {
+                    deviceDTO.FanSpeed = (int)device.FanSpeed;
+                }
+                if(device.Temperature.HasValue)
+                {
+                    deviceDTO.Temperature = (int)device.Temperature;
+                }
+                if (device.LightBrightness.HasValue)
+                {
+                    deviceDTO.LightBrightness = (int)device.LightBrightness;
+                }
+                if(device.IsActive.HasValue)
+                {
+                    deviceDTO.IsActive = (bool)device.IsActive;
+                }
+                devices.Add(deviceDTO);
+            }
+            return devices;
         }
         [HttpPost]
         public int? AddDevice([FromHeader] int roomId, [FromHeader] string Type)
@@ -33,14 +65,15 @@ namespace SmartHomeAPI.Controllers
             return device.Id;
         }
         [HttpPatch]
-        public bool UpdateDevice([FromHeader] string Type, [FromHeader] int Id, [FromHeader] string? LightBrightness = null
-            ,[FromHeader] string? Temperature = null, [FromHeader] string? FanSpeed = null, [FromHeader] bool IsActive = false)
+        public bool UpdateDevice([FromHeader] string Type, [FromHeader] int Id, [FromHeader] int? LightBrightness = null
+            ,[FromHeader] int? Temperature = null, [FromHeader] int? FanSpeed = null, [FromHeader] bool IsActive = false)
         {
             var device = (from p in db.Devices where p.Id == Id select p).First();
 
-            device.LightBrightness = Convert.ToDouble(LightBrightness);
-            device.Temperature = Convert.ToDouble(Temperature);
-            device.FanSpeed = Convert.ToDouble(FanSpeed);
+           
+            device.LightBrightness = LightBrightness;
+            device.Temperature = Temperature;
+            device.FanSpeed = FanSpeed;
             device.IsActive = IsActive;
             db.Devices.Update(device);
             db.SaveChanges();
