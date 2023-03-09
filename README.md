@@ -1,0 +1,2 @@
+# SmartHomeAPI
+API for SmartHome
